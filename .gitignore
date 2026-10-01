@@ -1,0 +1,11 @@
+# Alles in data/ ist persönlich (Umsätze, Kontostände, API-Key, Regeln) —
+# nichts davon gehört ins Repo. Nur der Platzhalter ist versioniert.
+data/*
+!data/.gitkeep
+
+# Umgebung
+.venv/
+.envrc
+__pycache__/
+*.pyc
+.DS_Store

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>Kapital · Finance</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Farbsystem ───────────────────────────────────────────────────────────────
+   Leitregel: Die einzigen gesättigten Farben auf dem Bildschirm sind GELD.
+   Alles andere — Flächen, Text, Rahmen, sogar die Bedienelemente — ist neutral.
+   Vorher machte ein Neongrün gleichzeitig "interaktiv", "positiv" und
+   "Marke", weshalb ein Button aussah wie ein Gewinn.
+
+   Der Grund ist bewusst warm statt blauschwarz: Fast-Schwarz mit Neonakzent ist
+   der Standardlook jedes Trading-Dashboards. Diese App liest man einmal im
+   Monat in Ruhe — sie soll nach Kontoauszug aussehen, nicht nach Börsenticker.
+   ─────────────────────────────────────────────────────────────────────────── */
+:root, :root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-0: #0f1115;  --bg-1: #16191f;  --bg-2: #1e222a;  --bg-raise: #232833;
+  --line: rgba(158,166,180,0.13);  --line-strong: rgba(158,166,180,0.22);
+  --fg: #e9e7e4;    --fg-soft: #c3c2c0;   --muted: #8a8f99;
+
+  /* Interaktion — entsättigt, nie mit Geld zu verwechseln */
+  --accent: #7d9fe0;  --accent-soft: rgba(125,159,224,0.16);  --on-accent: #10131a;
+  --shadow: rgba(0,0,0,0.45);
+
+  /* Geld. Zwei Stufen je Richtung: kleine Beträge dürfen leiser sein. */
+  --pos: #5fa774;   --pos-dim: rgba(95,167,116,0.55);  --pos-soft: rgba(95,167,116,0.14);
+  --neg: #cf6f66;   --neg-dim: rgba(207,111,102,0.55); --neg-soft: rgba(207,111,102,0.14);
+  --warn: #d1a24f;  --warn-dim: #b9873a; --warning: #b9873a; --over: #c98553;
+  --warn-soft: rgba(209,162,79,0.13);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg-0: #f6f5f2;  --bg-1: #ffffff;  --bg-2: #efedea;  --bg-raise: #ffffff;
+  --line: rgba(52,54,62,0.13);  --line-strong: rgba(52,54,62,0.22);
+  --fg: #1b1d21;    --fg-soft: #3f434a;   --muted: #6d727b;
+  --accent: #3d6cc8;  --accent-soft: rgba(61,108,200,0.11);  --on-accent: #ffffff;
+  --shadow: rgba(28,30,36,0.16);
+  --pos: #2f7c48;   --pos-dim: rgba(47,124,72,0.6);   --pos-soft: rgba(47,124,72,0.10);
+  --neg: #b0392f;   --neg-dim: rgba(176,57,47,0.6);   --neg-soft: rgba(176,57,47,0.09);
+  --warn: #96690f;  --warn-dim: #7d5709; --warning: #7d5709; --over: #a35a22;
+  --warn-soft: rgba(150,105,15,0.11);
+}
+
+:root {
+  --font-ui: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --r-sm: 8px; --r-md: 11px; --r-lg: 14px;
+  accent-color: var(--accent); caret-color: var(--accent);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; background: var(--bg-0); color: var(--fg);
+  font-family: var(--font-ui); font-size: 14px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Zahlen sind das Produkt dieser App. Ohne Tabellenziffern springen die
+   Spalten horizontal und Beträge lassen sich untereinander nicht vergleichen —
+   eine Zeile CSS, grösste Wirkung pro Aufwand in der ganzen Oberfläche. */
+body { font-variant-numeric: tabular-nums; }
+table, .mono, [style*="var(--mono)"] { font-variant-numeric: tabular-nums; }
+
+input[type=range] { height: 4px; background: var(--bg-2); border-radius: 2px; accent-color: var(--accent); }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* Fokus nur für Mausklicks unterdrücken, nie für Tastaturnutzung. */
+button:focus, input:focus, select:focus { outline: none; }
+button:focus-visible, input:focus-visible, select:focus-visible,
+a:focus-visible, [tabindex]:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px;
+}
+::selection { background: var(--accent-soft); color: var(--fg); }
+
+/* Das EINE Bewegungsmoment: Zahlen, die sich ändern, blenden kurz auf.
+   Kein Hover-Effekt auf allem, keine Einblendung je Sektion. */
+@keyframes valueIn { from { opacity: 0.45; } to { opacity: 1; } }
+.value-anim { animation: valueIn 0.22s cubic-bezier(0.16,1,0.3,1); }
+@media (prefers-reduced-motion: reduce) {
+  .value-anim { animation: none; }
+}
+
+.app { display: flex; min-height: 100vh; }
+.main { flex: 1; min-width: 0; background: var(--bg-0); display: flex; flex-direction: column; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
+</head>
+<body>
+<div id="root"></div>
+<script>
+  // Vor dem ersten Rendern anwenden, sonst blitzt die dunkle Ansicht kurz auf,
+  // bevor React die gespeicherte Wahl kennt.
+  try {
+    var t = localStorage.getItem("kapital.theme") || "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
+</script>
+<script type="text/babel" src="ui.jsx"></script>
+<script type="text/babel" src="charts.jsx"></script>
+<script type="text/babel" src="filters.jsx"></script>
+<script type="text/babel" src="review-modal.jsx"></script>
+<script type="text/babel" src="page-dashboard.jsx"></script>
+<script type="text/babel" src="page-monatsabschluss.jsx"></script>
+<script type="text/babel" src="page-upload.jsx"></script>
+<script type="text/babel" src="page-transactions.jsx"></script>
+<script type="text/babel" src="page-categories.jsx"></script>
+<script type="text/babel" src="page-portfolio.jsx"></script>
+<script type="text/babel" src="page-vermoegen.jsx"></script>
+<script type="text/babel" src="page-forecast.jsx"></script>
+<script type="text/babel" src="page-jahresuebersicht.jsx"></script>
+<script type="text/babel" src="page-abos.jsx"></script>
+<script type="text/babel" src="page-fire.jsx"></script>
+<script type="text/babel" src="page-steuer.jsx"></script>
+<script type="text/babel" src="page-regeln.jsx"></script>
+<script type="text/babel" src="app.jsx"></script>
+</body>
+</html>

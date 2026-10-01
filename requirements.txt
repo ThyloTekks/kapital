@@ -1,0 +1,29 @@
+# Kapital – FastAPI backend + shared finance/ core
+
+# Web backend
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.0.0
+python-multipart>=0.0.9   # FastAPI file uploads (multipart/form-data)
+
+# Data & analytics
+pandas>=2.0.0
+numpy>=1.24.0
+pyarrow>=14.0.0           # pandas Parquet engine (read/write .parquet)
+
+# Import / parsing
+chardet>=5.0.0
+pypdfium2>=4.0.0
+
+# Market data
+yfinance>=0.2.36
+
+# KI-Monatsbewertung (Claude API)
+anthropic>=0.116.0
+
+# Kronos forecast model
+torch>=2.0.0
+einops>=0.7.0
+huggingface_hub>=0.20.0
+safetensors>=0.4.0        # loads Kronos model weights (.safetensors)
+tqdm>=4.66.0
